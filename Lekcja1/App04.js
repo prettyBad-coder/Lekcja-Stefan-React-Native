@@ -24,7 +24,7 @@ class App03 extends Component {
 				<View style={{ flex: 1, flexDirection: 'column' }}>
 					{ this.state.colors.map((element, index) => {
 						return (
-							<Item color={ element } index={ index } />
+							<Item color={ element } index={ index } key={ index } />
 						)
 					}) }
 				</View>
