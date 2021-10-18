@@ -13,7 +13,7 @@ class Button extends Component {
 	}
 
 	_onLongPress = () => {
-		this.props.buttonPress();
+		this.props.buttonPress(this.props.name);
 	}
 
 	render() {

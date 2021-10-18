@@ -23,29 +23,42 @@ class Kalkulator extends Component {
 		};
 	}
 
+	removeLastChar = (string) => string.substring(0, string.length - 1);
 		
-	buttonClick = (value) => {
+	buttonClick = async (value) => {
 		let outputString = this.state.outputString.toString();
 		if(value == '=') {
-			let result = eval(this.state.outputString)
-			this.setState({ pressedEqual: !this.state.pressedEqual, outputString: result})
-		} else if (value == 'C') {
-			outputString = outputString.substring(0, outputString.length - 1);
-			this.setState({ outputString: outputString })
-		} else {
-			if(this.state.pressedEqual) {
-				outputString = ''
-				this.setState({ pressedEqual: !this.state.pressedEqual })
+			try {
+				this.setState({ pressedEqual: !this.state.pressedEqual, outputString: this.state.outputString == '' ? '' : eval(this.state.outputString)})
+			} catch (error) {
+				this.setState({outputString: 'error'});
 			}
-			outputString += value;
-			this.setState({ outputString: outputString });
+		} else if (value == 'C') {
+			this.setState({ outputString: this.removeLastChar(outputString) })
+		} else {
+			let previousChar = isNaN(parseInt(this.state.outputString[this.state.outputString.length - 1]));
+
+			if(!previousChar || typeof(value) != 'string'){
+				if(this.state.pressedEqual) {
+					outputString = '';
+					this.setState({ pressedEqual: !this.state.pressedEqual })
+				}
+				outputString += value;
+				this.setState({ outputString: outputString });
+			} else {
+				let string = this.removeLastChar(this.state.outputString);
+				string += value;
+				this.setState({outputString: string});
+			}
 		}
 	}
 
-	onLongPress = () => this.setState({outputString: ''});
+	onLongPress = (name) => {
+		if(name == 'C') this.setState({outputString: ''});
+		else this.buttonClick(name)
+	}
 
 	render() {
-
 		return (
 			<View style={{ flex: 1, backgroundColor: '#303030'}}>
 				<Output string={ this.state.outputString } />
@@ -76,7 +89,6 @@ const styles = StyleSheet.create({
 		flex: 3,
 		flexDirection: 'row',
 		flexWrap: 'wrap',
-		// backgroundColor: 'red'
 	},
 	column: {
 		flex: 1,

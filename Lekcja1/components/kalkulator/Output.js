@@ -1,20 +1,20 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet  } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
 class Output extends Component {
-  constructor(props) {
-	super(props);
-	this.state = {
-	};
-  }
+	constructor(props) {
+		super(props);
+		this.state = {
+		};
+	}
 
-  render() {
-	return (
-	  <View style={ styles.output }>
-		<Text style={ styles.text }> { this.props.string } </Text>
-	  </View>
-	);
-  }
+	render() {
+		return (
+			<View style={styles.output}>
+				<Text style={styles.text}> {this.props.string} </Text>
+			</View>
+		);
+	}
 }
 
 const styles = StyleSheet.create({
