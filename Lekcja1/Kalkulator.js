@@ -13,11 +13,7 @@ class Kalkulator extends Component {
 				[2, 5, 8, 0],
 				[3, 6, 9, '='],
 				['C', '/', '*', '-', '+']
-			], 
-			previosValue: {
-				string: '',
-				iteration: 0
-			},
+			],
 			outputString: '',
 			pressedEqual: true
 		};
@@ -27,29 +23,31 @@ class Kalkulator extends Component {
 		
 	buttonClick = async (value) => {
 		let outputString = this.state.outputString.toString();
-		if(value == '=') {
-			try {
-				this.setState({ pressedEqual: !this.state.pressedEqual, outputString: this.state.outputString == '' ? '' : eval(this.state.outputString)})
-			} catch (error) {
-				this.setState({outputString: 'error'});
-			}
-		} else if (value == 'C') {
-			this.setState({ outputString: this.removeLastChar(outputString) })
-		} else {
-			let previousChar = isNaN(parseInt(this.state.outputString[this.state.outputString.length - 1]));
-
-			if(!previousChar || typeof(value) != 'string'){
-				if(this.state.pressedEqual) {
-					outputString = '';
-					this.setState({ pressedEqual: !this.state.pressedEqual })
+		switch (value) {
+			case '=':
+				try {
+					this.setState({ 
+						pressedEqual: !this.state.pressedEqual, 
+						outputString: this.state.outputString == '' ? '' : eval(this.state.outputString)
+					});
+				} catch (error) {
+					this.setState({outputString: 'error'});
 				}
-				outputString += value;
-				this.setState({ outputString: outputString });
-			} else {
-				let string = this.removeLastChar(this.state.outputString);
-				string += value;
-				this.setState({outputString: string});
-			}
+				break;
+			case 'C':
+				this.setState({ outputString: this.removeLastChar(outputString) })
+				break;
+			default:
+				let previousChar = this.state.outputString[this.state.outputString.length - 1];
+				if(!isNaN(parseInt(previousChar)) || typeof(value) != 'string'){
+					this.setState({ 
+						outputString: this.state.pressedEqual ? (value) : (outputString + value),
+						pressedEqual: this.state.pressedEqual ? false : undefined
+					});
+				} else {
+					this.setState({outputString: this.removeLastChar(this.state.outputString) + value});
+				}
+				break;
 		}
 	}
 

@@ -8,6 +8,8 @@ class Output extends Component {
 		};
 	}
 
+	
+
 	render() {
 		return (
 			<View style={styles.output}>
