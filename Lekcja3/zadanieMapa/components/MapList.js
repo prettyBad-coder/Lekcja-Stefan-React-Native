@@ -11,9 +11,9 @@ class MapList extends Component {
 		super(props);
 		this.state = {
 			positions: [
-				{id: 0, lat: 49.9752400, lng: 19.8286900 },
-				{id: 1, lat: 49.971070, lng: 19.829205 },
-				{id: 2, lat: 49.973091, lng: 19.831734 },
+				{id: 0, lat: 49.9752400, lng: 19.8286900, state: false },
+				{id: 1, lat: 49.971070, lng: 19.829205, state: false },
+				{id: 2, lat: 49.973091, lng: 19.831734, state: false },
 			],
 			colors: [
 				'#3a86ff',
@@ -73,6 +73,17 @@ class MapList extends Component {
 		});
 	}
 
+	switchChange = (obj) => {
+		console.log(obj)
+		let pos = this.state.positions
+		this.state.positions.forEach((element, index) => {
+			if(index == obj.id) {
+				pos[obj.id].state = !pos[obj.id].state
+			}
+		})
+		console.log(this.state.positions)
+	}
+
 	render() {
 		return (
 			<View style={ styles.container }>
@@ -85,7 +96,7 @@ class MapList extends Component {
 					keyExtractor={item => item.id}
 					data={ this.state.positions }
 					renderItem={({item}) => (
-						<MapItem color={ this.state.colors[item.id] } lat={item.lat} lng={item.lng} />
+						<MapItem switchChange={ this.switchChange } color={ this.state.colors[item.id] } lat={item.lat} lng={item.lng} id={ item.id } state={ item.state }/>
 					)}
 				/>
 			</View>
