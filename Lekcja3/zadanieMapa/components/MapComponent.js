@@ -33,15 +33,18 @@ class App extends Component {
 			}}>
 				{
 					this.props.route.params.markers.map((element, index) => {
-						return(
-							<MapView.Marker
-								coordinate={{ 
-									latitude: element.lat,
-									longitude: element.lng,
-								}}
-								key={ index }
-							/>
-						)
+						console.log(element)
+						if(element.state) {
+							return(
+								<MapView.Marker
+									coordinate={{ 
+										latitude: element.lat,
+										longitude: element.lng,
+									}}
+									key={ index }
+								/>
+							)
+						}
 					})
 				}
 				<MapView.Marker

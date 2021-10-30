@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Switch } from 'react-native';
 import { AsyncStorage } from "react-native";
 import MapItem from './ListItem';
 import * as Location from "expo-location";
@@ -36,7 +36,8 @@ class MapList extends Component {
 				'#ff006e',
 				'#fb5607',
 				'#ffbe0b',
-			]
+			],
+			switchState: false,
 		};
 	}
 	
@@ -74,14 +75,16 @@ class MapList extends Component {
 	}
 
 	switchChange = (obj) => {
-		console.log(obj)
 		let pos = this.state.positions
-		this.state.positions.forEach((element, index) => {
+		pos.forEach((element, index) => {
 			if(index == obj.id) {
-				pos[obj.id].state = !pos[obj.id].state
+				element.state = !element.state
 			}
 		})
-		console.log(this.state.positions)
+	}
+
+	mainSwitchChange = () => {
+		this.setState({ switchState: !this.state.switchState})
 	}
 
 	render() {
@@ -91,6 +94,16 @@ class MapList extends Component {
 					<MyButton name="Get position" onClick={ this.getPosition } textStyle={{ fontSize: 25 }} />
 					<MyButton name="Delete positions" onClick={ this.deletePositions } textStyle={{ fontSize: 25, color: 'red'}} />
 					<MyButton name="Go to map" onClick={ this.goToMap } textStyle={{ fontSize: 40 }} containerStyle={{ marginTop: 20 }} />
+				</View>
+				<View style={ styles.switchWrapper }>
+					<Text>
+						Turn on all:
+					</Text>
+					<Switch 
+						style={ styles.mainSwitch }
+						onValueChange={ this.mainSwitchChange }
+						value={ this.state.switchState }
+					/>
 				</View>
 				<FlatList
 					keyExtractor={item => item.id}
@@ -115,6 +128,14 @@ const styles = StyleSheet.create({
 		marginLeft: 5,
 		marginRight: 5,
 		marginTop: 10,
+	},
+	switchWrapper: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	mainSwitch: {
+		marginLeft: 5,
 	}
 })
 
