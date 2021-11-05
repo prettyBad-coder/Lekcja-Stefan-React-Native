@@ -1,8 +1,4 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { ActivityIndicator } from 'react-native'; // okrągła animacja ładowania
-import * as Font from "expo-font";
-import * as Location from "expo-location";
 import MapView from 'react-native-maps';
 
 
@@ -13,12 +9,9 @@ class App extends Component {
 			startPosition: {
 				lat: 49.9752400,
 				lng: 19.8286900
-			}
+			},
+			delta: 0.008
 		};
-	}
-
-	componentDidMount = () => {
-		console.log(this.props.route.params.markers);
 	}
 
 	render() {
@@ -28,12 +21,11 @@ class App extends Component {
 				initialRegion={{
 					latitude: this.state.startPosition.lat,
 					longitude: this.state.startPosition.lng,
-					latitudeDelta: 0.001,
-					longitudeDelta: 0.001,
+					latitudeDelta: this.state.delta,
+					longitudeDelta: this.state.delta,
 			}}>
 				{
 					this.props.route.params.markers.map((element, index) => {
-						console.log(element)
 						if(element.state) {
 							return(
 								<MapView.Marker

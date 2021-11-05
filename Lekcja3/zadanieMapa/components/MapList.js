@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, StyleSheet, Switch } from 'react-native';
-import { AsyncStorage } from "react-native";
+import { View, Text, FlatList, StyleSheet, Switch, ActivityIndicator, Dimensions, Image } from 'react-native';
+// import { AsyncStorage } from "react-native";
 import MapItem from './ListItem';
 import * as Location from "expo-location";
 import MyButton from './MyButton';
@@ -38,10 +38,13 @@ class MapList extends Component {
 				'#ffbe0b',
 			],
 			switchState: false,
+			gettingPosition: false,
 		};
 	}
 	
-	componentDidMount = async () => { this.setPermissions(); }
+
+
+	componentDidMount = async () => this.setPermissions(); 
 
 	setPermissions = async () => {
 		let { status } = await Location.requestForegroundPermissionsAsync();
@@ -50,6 +53,7 @@ class MapList extends Component {
 	}
 
 	getPosition = async () => {
+		this.setState({gettingPosition: true})
 		let positionsArr = this.state.positions;
 		let position = await Location.getCurrentPositionAsync();
 		let obj = {
@@ -58,12 +62,10 @@ class MapList extends Component {
 			lng: position.coords.longitude,
 		};
 		positionsArr.push(obj);
-		this.setState({ positions: positionsArr })
-	}
-
-	addPosition = async () => {
-		let date = new Date();
-		let now = `${date.getHours()}:${date.getMinutes()} ${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+		this.setState({ 
+			positions: positionsArr, 
+			gettingPosition: false 
+		})
 	}
 
 	deletePositions = async () => this.setState({ positions: [] });
@@ -74,17 +76,25 @@ class MapList extends Component {
 		});
 	}
 
-	switchChange = (obj) => {
+	switchChange = (id) => {
 		let pos = this.state.positions
 		pos.forEach((element, index) => {
-			if(index == obj.id) {
+			if(index == id) 
 				element.state = !element.state
-			}
 		})
+		this.setState({positions: pos})
 	}
 
 	mainSwitchChange = () => {
-		this.setState({ switchState: !this.state.switchState})
+		let pos = this.state.positions;
+		pos.forEach(element => {
+			// false i true sa odwrocone bo state mainSwitcha jest zmianiany dopiero po tym foreachu
+			element.state = this.state.switchState ? false : true
+		});
+		this.setState({ 
+			switchState: !this.state.switchState, 
+			positions: pos
+		})
 	}
 
 	render() {
@@ -93,7 +103,13 @@ class MapList extends Component {
 				<View style={ styles.buttonsWrapper }>
 					<MyButton name="Get position" onClick={ this.getPosition } textStyle={{ fontSize: 25 }} />
 					<MyButton name="Delete positions" onClick={ this.deletePositions } textStyle={{ fontSize: 25, color: 'red'}} />
-					<MyButton name="Go to map" onClick={ this.goToMap } textStyle={{ fontSize: 40 }} containerStyle={{ marginTop: 20 }} />
+					<View style={styles.goToMapButtonWrapper}>
+						<MyButton name="Go to map" onClick={ this.goToMap } textStyle={{ fontSize: 40 }} containerStyle={{ marginTop: 20 }} />
+						<Image
+							style={styles.pinImage}
+							source={ require('../images/pin.png') }
+						/>
+					</View>
 				</View>
 				<View style={ styles.switchWrapper }>
 					<Text>
@@ -112,6 +128,15 @@ class MapList extends Component {
 						<MapItem switchChange={ this.switchChange } color={ this.state.colors[item.id] } lat={item.lat} lng={item.lng} id={ item.id } state={ item.state }/>
 					)}
 				/>
+				{
+					this.state.gettingPosition
+					?
+					<View style={styles.activityIndicatorContainer}>
+						<ActivityIndicator size="large" style={styles.activityIndicator}/>
+					</View>
+					:
+					null
+				}
 			</View>
 		);
 	}
@@ -120,6 +145,19 @@ class MapList extends Component {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		position: 'relative',
+	},
+	activityIndicatorContainer: {
+		flex: 1,
+		height: Dimensions.get("window").height,
+		width: Dimensions.get("window").width,
+		position: 'absolute',
+		backgroundColor: 'black',
+		alignItems: 'center',
+		opacity: 0.5,
+	},
+	activityIndicator: {
+		margin: 300,
 	},
 	buttonsWrapper: {
 		flexDirection: 'row',
@@ -132,11 +170,23 @@ const styles = StyleSheet.create({
 	switchWrapper: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		justifyContent: 'center'
+		justifyContent: 'center',
+		marginBottom: 20,
 	},
 	mainSwitch: {
 		marginLeft: 5,
-	}
+	},
+	goToMapButtonWrapper: {
+		position: 'relative',
+		marginBottom: 15,
+	},
+	pinImage: {
+		height: 40,
+		width: 40,
+		position: 'absolute',
+		right: -35,
+		top: 20,
+	},
 })
 
 export default MapList;
