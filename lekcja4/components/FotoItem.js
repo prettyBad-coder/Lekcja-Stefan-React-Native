@@ -15,7 +15,7 @@ class FotoItem extends Component {
 	}
 	
 	onLongClick = () => {
-		this.props.onLongClick(this.props.id);
+		this.props.onLongClick(this.props.uri, this.props.id);
 	}
 
 	render() {

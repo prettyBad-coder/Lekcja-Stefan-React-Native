@@ -76,8 +76,12 @@ class PhotosPage extends Component {
 		this.refresh();
 	}
 
-	_photoLongPress = (id) => {
-		console.log(id);
+	_photoLongPress = (uri, id) => {
+		this.props.navigation.navigate('bigPhoto', {
+			uri: uri,
+			id: id,
+			refresh: this.refresh,
+		})
 	}
 
 	render() {

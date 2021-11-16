@@ -5,10 +5,11 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
 
-//components
+//screens
 import EntryPage from './components/EntryPage';
 import PhotosPage from './components/PhotosPage';
-import cameraComponent from './components/CameraComponent'
+import cameraComponent from './components/CameraComponent';
+import BigPhoto from './components/BigPhoto';
 
 class App extends Component {
 	constructor(props) {
@@ -47,6 +48,19 @@ class App extends Component {
 						options={{
 							title: 'Camera',
 							headerShown: false
+						}}
+					/>
+					<Stack.Screen
+						name='bigPhoto'
+						component={ BigPhoto }
+						options={{
+							title: 'bigPhoto',
+							headerStyle: {
+								backgroundColor: 'white',
+							},
+							headerTitleStyle: {
+								color: 'black'
+							}
 						}}
 					/>
 				</Stack.Navigator>
