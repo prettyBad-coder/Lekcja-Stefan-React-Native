@@ -22,11 +22,11 @@ class App extends Component {
 		return (
 			<NavigationContainer>
 				<Stack.Navigator>
-					{/* <Stack.Screen
+					<Stack.Screen
 						name='entryPage'
 						component={ EntryPage }
 						options={{ headerShown: false }}
-					/> */}
+					/>
 					<Stack.Screen
 						name='photosList'
 						component={ PhotosPage }
