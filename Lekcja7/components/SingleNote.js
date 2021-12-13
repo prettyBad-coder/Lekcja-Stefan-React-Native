@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 
 class SingleNote extends Component {
   constructor(props) {
@@ -11,24 +11,14 @@ class SingleNote extends Component {
 	};
   }
 
-	getRandomColor = () => {
-		let letters = '0123456789ABCDEF';
-		let color = '#';
-		for (let i = 0; i < 6; i++) 
-			color += letters[Math.floor(Math.random() * 16)];
-		this.setState({color: color})
-	}
-
   	componentDidMount = () => {
 		this.setState({date: (new Date(JSON.parse(this.props.properties).time).toDateString()).split(' ')})
-		this.getRandomColor();
 	};
-
 
 	render() {
 		return (
-			<View style={[styles.box, {
-				backgroundColor: this.state.color,
+			<TouchableOpacity onLongPress={() => {this.props.onLongPress(this.props.index)}} style={[styles.box, {
+				backgroundColor: this.props.color,
 			}]}>
 				<Text style={[styles.text ,styles.time]}>
 					{`${this.state.date[2]} ${this.state.date[1]}`}
@@ -39,7 +29,7 @@ class SingleNote extends Component {
 				<Text style={[styles.text ,styles.content]}>
 					{JSON.parse(this.props.properties).content}
 				</Text>
-			</View>
+			</TouchableOpacity>
 		);
 	}
 }
