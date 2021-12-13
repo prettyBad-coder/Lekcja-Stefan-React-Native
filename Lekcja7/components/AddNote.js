@@ -8,15 +8,11 @@ class AddNote extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			title: "title",
-			content: "content",
+			title: '',
+			content: '',
 			index: 0,
 			keysTab: [],
 		};
-	}
-
-	componentDidUpdate = () => {
-		console.log(this.state.keysTab);
 	}
 
 	_handleSubmit = async (title, content) => {
@@ -31,7 +27,11 @@ class AddNote extends Component {
 			time: date,
 		}));
 		await SecureStore.setItemAsync('keysArr', JSON.stringify([...keysTab]));
-		this.setState({keyTabs: [...keysTab]})
+		this.setState({
+			keyTabs: [...keysTab],
+			title: '',
+			content: '',
+		})
 		
 	};
 

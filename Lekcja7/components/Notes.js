@@ -12,9 +12,10 @@ class Notes extends Component {
 			keysArr: [],
 			itemsArr: [],
 		};
+		this.funkcja = null;
 	}
 
-	componentDidMount = async () => {
+	getNotes = async () => {
 		let keysArr = JSON.parse(await SecureStore.getItemAsync('keysArr'));
 		let itemsArr = [];
 		for(const key of keysArr) 
@@ -24,6 +25,21 @@ class Notes extends Component {
 			keysArr: [...keysArr],
 			itemsArr: [...itemsArr],
 		});
+	}
+
+	refresh = () => {
+		console.log('refresh');
+	}
+
+	componentDidMount = () => {
+		this.funkcja = this.props.navigation.addListener('focus', () => {
+			this.getNotes()
+		});
+		this.getNotes()
+	}
+
+	componentWillUnmount() {
+		this.funkcja();
 	}
 
 	render() {
@@ -37,8 +53,8 @@ class Notes extends Component {
 					})
 				}
 			</ScrollView>
-	);
-}
+		);
+	}
 }
 
 const styles = StyleSheet.create({
