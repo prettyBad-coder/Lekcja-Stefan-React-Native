@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Dimensions, Button, TouchableOpacity } from "re
 import * as SecureStore from "expo-secure-store";
 import { TextInput } from "react-native-gesture-handler";
 import MyButton from "./MyButton";
+import { Picker } from '@react-native-picker/picker';
 
 class AddNote extends Component {
 	constructor(props) {
@@ -12,7 +13,11 @@ class AddNote extends Component {
 			content: '',
 			index: 0,
 			keysTab: [],
+			categoriesArr: [],
+			currentCategory: '',
 		};
+
+		this.funkcja = null;
 	}
 
 	_handleSubmit = async (title, content) => {
@@ -25,6 +30,7 @@ class AddNote extends Component {
 			title: title,
 			content: content,
 			time: date,
+			category: this.state.currentCategory
 		}));
 		await SecureStore.setItemAsync('keysArr', JSON.stringify([...keysTab]));
 		this.setState({
@@ -35,6 +41,19 @@ class AddNote extends Component {
 		
 	};
 
+	getCategories = async () => {
+		this.setState({
+			categoriesArr: JSON.parse(await SecureStore.getItemAsync('categoriesArr')),
+			currentCategory: JSON.parse(await SecureStore.getItemAsync('categoriesArr'))[0],
+		})
+	}
+
+	componentDidMount = () => {
+		this.funkcja = this.props.navigation.addListener("focus", () => {
+			this.getCategories();
+		});
+		this.getCategories();
+	};
 
 	render() {
 		return (
@@ -50,12 +69,28 @@ class AddNote extends Component {
 					style={styles.input}
 					placeholder="Content"
 					value={this.state.content}
-					/>
-				<TouchableOpacity style={styles.buttonStyle} onPress={() => this._handleSubmit(this.state.title, this.state.content)}>
-					<Text style={styles.buttonText}>
-						Add
-					</Text>
-				</TouchableOpacity>
+				/>
+				<Picker
+
+					selectedValue={this.state.currentCategory}
+					onValueChange={(value) => this.setState({currentCategory: value})}>
+
+					{
+						this.state.categoriesArr.map((element, index) => {
+							return (
+								<Picker.Item value={element} label={element} key={index}/>
+							)
+						})
+					}
+
+				</Picker>
+				<View style={{ alignItems: 'center' }}>
+					<TouchableOpacity style={styles.buttonStyle} onPress={() => this._handleSubmit(this.state.title, this.state.content)}>
+						<Text style={styles.buttonText}>
+							Add
+						</Text>
+					</TouchableOpacity>
+				</View>
 			</View>
 		);
   }
@@ -65,7 +100,6 @@ class AddNote extends Component {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		alignItems: "center",
 	},
 	input: {
 		height: 40,

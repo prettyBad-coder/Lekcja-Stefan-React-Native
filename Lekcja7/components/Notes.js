@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Alert } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import SingleNote from "./SingleNote";
 import { ScrollView } from "react-native-gesture-handler";
+import { TextInput } from "react-native-gesture-handler";
 
 class Notes extends Component {
   constructor(props) {
@@ -293,6 +294,7 @@ class Notes extends Component {
         "#dce77a",
         "#77ecca",
       ],
+	  search: '',
     };
     this.funkcja = null;
   }
@@ -303,9 +305,11 @@ class Notes extends Component {
     for (const key of keysArr)
       itemsArr.push(await SecureStore.getItemAsync(key.toString()));
 
+	await SecureStore.setItemAsync('itemsArr', JSON.stringify([...itemsArr]))
     this.setState({
       keysArr: [...keysArr],
       itemsArr: [...itemsArr],
+	  finalItemsArr: [...itemsArr],
     });
   };
 
@@ -318,6 +322,13 @@ class Notes extends Component {
 
   componentWillUnmount() {
     this.funkcja();
+  }
+
+  navigateFun = (string, properties, index) => {
+	  	this.props.navigation.navigate(string, {
+			properties: properties, 
+			index: index, 
+		});
   }
 
   noteLongPress = (index) => {
@@ -355,21 +366,48 @@ class Notes extends Component {
     this.getNotes();
   };
 
+  	_searchInput = (search) => {
+		  console.log(search);
+		this.setState({ search })
+		let itemsArr = this.state.itemsArr
+		if(search.length > 0) {
+			let filteredItemsArr = itemsArr.filter((element, index) => {
+				if(JSON.parse(element).title.includes(search) || JSON.parse(element).category.includes(search) || JSON.parse(element).content.includes(search))
+					return element;	
+			})
+			this.setState({itemsArr: filteredItemsArr})
+		} else {
+			this.setState({itemsArr: this.state.finalItemsArr});
+		}
+	}
+
+
   	render() {
 			return (
-				<ScrollView style={styles.notesWrapper}>
-					{this.state.itemsArr.map((element, index) => {
-						return (
-							<SingleNote
-								onLongPress={this.noteLongPress}
-								properties={element}
-								key={index}
-								index={index}
-								color={this.state.colors[index]}
-							/>
-						);
-					})}
-				</ScrollView>
+				<View style={{ flex: 1 }}>
+					<View style={styles.search}>
+						<TextInput
+							onChangeText={(search) => this._searchInput(search)}
+							style={styles.input}
+							placeholder="Search..."
+							value={this.state.search}
+						/>
+					</View>
+					<ScrollView style={styles.notesWrapper}>
+						{this.state.itemsArr.map((element, index) => {
+							return (
+								<SingleNote
+									navigateFun={this.navigateFun}
+									onLongPress={this.noteLongPress}
+									properties={element}
+									key={index}
+									index={index}
+									color={this.state.colors[index]}
+								/>
+							);
+						})}
+					</ScrollView>
+				</View>
 			);
   	}
 }
@@ -379,6 +417,13 @@ const styles = StyleSheet.create({
     flex: 1,
     marginBottom: 30,
   },
+  input: {
+	height: 40,
+	borderBottomWidth: 1,
+	margin: 10,
+	width: "95%",
+	textAlign: "center",
+},
 });
 
 export default Notes;

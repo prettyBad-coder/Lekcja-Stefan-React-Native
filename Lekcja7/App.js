@@ -9,12 +9,13 @@ import {
 } from '@react-navigation/drawer';
 import Notes from './components/Notes';
 import AddNote from './components/AddNote';
-import Info from './components/Info';
+import AddCategory from './components/AddCategory'; 
+import EditView from './components/EditView';
 
 function CustomDrawerContent(props) {
   return (
     <DrawerContentScrollView {...props}>
-      <DrawerItemList {...props} />
+      <DrawerItemList {...props} />	
       <DrawerItem label="info" onPress={() => alert('Link to help')} />
     </DrawerContentScrollView>
   );
@@ -55,12 +56,24 @@ export default function App() {
 					drawerIcon: () => (
 						<Image
 							style={styles.icon}
-							source={require('./assets/info.png')}
+							source={require('./assets/plus-category.png')}
 						/>
 					)
 				}} 
-				name="Info" 
-				component={Info} 
+				name="AddCategory" 
+				component={AddCategory} 
+			/>
+			<Drawer.Screen 
+				// options={{
+				// 	drawerIcon: () => (
+				// 		<Image
+				// 			style={styles.icon}
+				// 			source={require('./assets/plus-category.png')}
+				// 		/>
+				// 	)
+				// }}
+				name="EditView" 
+				component={EditView} 
 			/>
 		</Drawer.Navigator>
     </NavigationContainer>
